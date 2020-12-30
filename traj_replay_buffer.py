@@ -111,18 +111,26 @@ class TrajReplayBuffer(BaseBuffer):
                 self.traj_rewards.popleft()
                 self.traj_dones.popleft()
                 self.current_len -= left_len
+                print("was full\nwas full\nwas full\nwas full\nwas full\nwas full\nwas full\nwas full\nwas full\n")
+            self.traj_observations[-1].append(np.array(obs).copy())
+            self.traj_next_observations[-1].append(np.array(next_obs).copy())
+            self.traj_actions[-1].append(np.array(action).copy())
+            self.traj_rewards[-1].append(np.array(reward).copy())
+            self.traj_dones[-1].append(np.array(done).copy())
+
             self.traj_observations.append(deque())
             self.traj_next_observations.append(deque())
             self.traj_actions.append(deque())
             self.traj_rewards.append(deque())
             self.traj_dones.append(deque())
-        self.traj_observations[-1].append(np.array(obs).copy())
-        self.traj_next_observations[-1].append(np.array(next_obs).copy())
-        self.traj_actions[-1].append(np.array(action).copy())
-        self.traj_rewards[-1].append(np.array(reward).copy())
-        self.traj_dones[-1].append(np.array(done).copy())
+        else:
+            self.traj_observations[-1].append(np.array(obs).copy())
+            self.traj_next_observations[-1].append(np.array(next_obs).copy())
+            self.traj_actions[-1].append(np.array(action).copy())
+            self.traj_rewards[-1].append(np.array(reward).copy())
+            self.traj_dones[-1].append(np.array(done).copy())
         self.current_len += 1
-
+        #print("cur size:" , self.current_len)
 
     def sample(self, batch_size: int, env: Optional[VecNormalize] = None) -> ReplayBufferSamples:
         """
@@ -136,7 +144,8 @@ class TrajReplayBuffer(BaseBuffer):
         :return:
         """
         if self.trajectory:
-            batch_inds = np.random.randint(len(self.traj_rewards), size=batch_size)
+            max_sample = len(self.traj_rewards) if len(self.traj_rewards[-1]) !=0 else  len(self.traj_rewards)-1
+            batch_inds = np.random.randint(max_sample, size=batch_size)
         else:
             if not self.optimize_memory_usage:
                 return super().sample(batch_size=batch_size, env=env)
