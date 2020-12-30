@@ -39,6 +39,8 @@ class TrajReplayBuffer(BaseBuffer):
         n_envs: int = 1,
         optimize_memory_usage: bool = False,
         trajectory: bool = True
+        #self.sequence_num = 3
+        #self.sequence_counter_list = []
     ):
         super(TrajReplayBuffer, self).__init__(buffer_size, observation_space, action_space, device, n_envs=n_envs)
         assert n_envs == 1, "Replay buffer only support single environment for now"
