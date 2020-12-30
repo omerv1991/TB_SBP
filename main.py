@@ -61,5 +61,3 @@ model.replay_buffer=TrajReplayBuffer(
 model.learn(total_timesteps=int(1e5))
 mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10, deterministic=True)
 plot_results(log_dir)
-
-i=1
