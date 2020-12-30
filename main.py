@@ -40,26 +40,25 @@ def plot_results(log_folder, title='Learning Curve'):
     plt.title(title + " Smoothed")
     plt.show()
 
-env = gym.make('CartPole-v1')
-#env = gym.make('FrozenLake-v0')
+#env = gym.make('CartPole-v1')
+env = gym.make('FrozenLake-v0')
 
 
 log_dir = "/tmp/gym/"
 os.makedirs(log_dir, exist_ok=True)
 env = Monitor(env, log_dir)
 
-model = DQN('MlpPolicy', env, verbose=1)#prioritized_replay=True
+model = DQN('MlpPolicy', env, verbose=1,batch_size=32)#prioritized_replay=True
 
 model.replay_buffer=TrajReplayBuffer(
             model.buffer_size,
             model.observation_space,
             model.action_space,
             model.device,
-            optimize_memory_usage=model.optimize_memory_usage,
+            trajectory = True
         )
 
-model.learn(total_timesteps=int(1e5))
+model.learn(total_timesteps=int(100000))
 mean_reward, std_reward = evaluate_policy(model, env, n_eval_episodes=10, deterministic=True)
 plot_results(log_dir)
 
-print("done")
